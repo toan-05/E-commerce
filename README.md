@@ -1,6 +1,6 @@
 # Order Service
 
-Event-driven order processing service built with Spring Boot, MySQL, Flyway, Kafka, Docker Compose, and Nginx.
+Event-driven order processing service built with Spring Boot, MySQL, Flyway, Kafka, Docker Compose, and Keycloak.
 
 The service accepts orders, publishes an order-created Kafka event, reserves inventory asynchronously, publishes the inventory result, and updates the order status from that result.
 
@@ -13,7 +13,6 @@ The service accepts orders, publishes an order-created Kafka event, reserves inv
 - Flyway
 - Apache Kafka
 - Docker Compose
-- Nginx load balancing
 - Swagger UI / OpenAPI
 
 ## Architecture
@@ -22,16 +21,12 @@ The service accepts orders, publishes an order-created Kafka event, reserves inv
 Client
   |
   v
-Nginx (:80)
+App (:8081)
   |
-  +--> app1 (:8081)
+  v
+MySQL
+  ^
   |
-  +--> app2 (:8082)
-          |
-          v
-        MySQL
-          ^
-          |
 Kafka topics:
   order-created     -> InventoryConsumer reserves stock
   inventory-result  -> OrderStatusConsumer updates order status
@@ -51,9 +46,7 @@ Kafka topics:
 
 Swagger UI is available after startup:
 
-- `http://localhost/swagger-ui.html` through Nginx
-- `http://localhost:8081/swagger-ui.html` for app1
-- `http://localhost:8082/swagger-ui.html` for app2
+- `http://localhost:8081/swagger-ui.html`
 
 Useful endpoints:
 
@@ -74,13 +67,15 @@ GET /api/v1/inventory-reservations
 GET /api/v1/inventory-reservations/{orderId}
 DELETE /api/v1/inventory-reservations/{orderId}
 
-GET /health
+GET /actuator/health
 ```
+
+Most `/api/v1/**` endpoints require a Keycloak access token after OAuth2 Resource Server is enabled. Use `/api/v1/me` to inspect the authenticated user and mapped roles.
 
 Create order example:
 
 ```bash
-curl -X POST http://localhost/api/v1/orders \
+curl -X POST http://localhost:8081/api/v1/orders \
   -H "Content-Type: application/json" \
   -d "{\"productId\":1,\"quantity\":2}"
 ```
@@ -88,7 +83,7 @@ curl -X POST http://localhost/api/v1/orders \
 Create product example:
 
 ```bash
-curl -X POST http://localhost/api/v1/products \
+curl -X POST http://localhost:8081/api/v1/products \
   -H "Content-Type: application/json" \
   -d "{\"name\":\"Mechanical Keyboard\",\"price\":99.00,\"stockQuantity\":10}"
 ```
@@ -115,16 +110,16 @@ docker compose up --build
 
 Services:
 
-- API through Nginx: `http://localhost`
-- app1: `http://localhost:8081`
-- app2: `http://localhost:8082`
+- API: `http://localhost:8081`
 - Kafka UI: `http://localhost:8080`
+- Keycloak Admin: `http://localhost:8090`
 - MySQL: `localhost:3306`
 
 Frontend dev origins allowed by default:
 
 - `http://localhost:3000`
 - `http://localhost:5173`
+- `http://localhost:5174`
 
 Change `CORS_ALLOWED_ORIGINS` in `.env` if your frontend runs on a different origin.
 
@@ -145,14 +140,7 @@ Run this when migrations changed or when your local database was created from an
 Frontend base URL:
 
 ```text
-http://localhost/api/v1
-```
-
-If you call app1/app2 directly instead of Nginx:
-
-```text
 http://localhost:8081/api/v1
-http://localhost:8082/api/v1
 ```
 
 ## Test
@@ -172,4 +160,4 @@ On Windows PowerShell:
 - Inventory reservation uses pessimistic locking to prevent concurrent stock overselling.
 - Kafka inventory processing is idempotent per order through the `inventory_reservations` table.
 - Flyway owns the schema and JPA runs with `ddl-auto=validate`.
-- Docker Compose starts two service instances behind Nginx to demonstrate horizontal scaling and consumer group behavior.
+- Docker Compose starts one service instance directly on port `8081`.
