@@ -13,10 +13,7 @@ Keycloak
   |
   | access token (JWT)
   v
-Nginx LB
-  |
-  +--> app1 Spring Boot Resource Server
-  +--> app2 Spring Boot Resource Server
+Spring Boot Resource Server (:8081)
 ```
 
 ## What Is Already Scaffolded
@@ -26,15 +23,15 @@ Nginx LB
 - Frontend `.env.example` has Keycloak client variables.
 - API is still public for now. Security will be enabled after you understand the Keycloak setup.
 
-## Step 1: Start Keycloak
+## Step 1: Start Local Infrastructure
 
 Run from the backend folder:
 
 ```powershell
-docker compose up --build -d
+docker compose up -d
 ```
 
-Open:
+Open Keycloak:
 
 ```text
 http://localhost:8090
@@ -204,7 +201,7 @@ GET    /api/v1/inventory-reservations   ADMIN
 DELETE /api/v1/inventory-reservations   ADMIN
 ```
 
-### Why jwk-set-uri differs in Docker
+### Local JWT Validation URLs
 
 The token issuer is:
 
@@ -214,11 +211,11 @@ http://localhost:8090/realms/order-service
 
 That value must match the JWT `iss` claim exactly because the browser logs in through `localhost`.
 
-But app containers cannot call `localhost:8090` to reach Keycloak, because inside a container `localhost` means the app container itself. Therefore Docker uses:
+Because the Spring Boot app runs from IntelliJ on the host machine, it can also fetch Keycloak signing keys through `localhost`:
 
 ```text
 OAUTH2_ISSUER_URI=http://localhost:8090/realms/order-service
-OAUTH2_JWK_SET_URI=http://keycloak:8080/realms/order-service/protocol/openid-connect/certs
+OAUTH2_JWK_SET_URI=http://localhost:8090/realms/order-service/protocol/openid-connect/certs
 ```
 
 Spring validates the token issuer against the first URL and fetches public signing keys through the second URL.
