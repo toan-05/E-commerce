@@ -51,7 +51,7 @@ class OrderServiceImplTest {
     @BeforeEach
     void setUp() {
         AppProperties appProperties = new AppProperties();
-        ReflectionTestUtils.setField(appProperties, "instanceName", "app1");
+        ReflectionTestUtils.setField(appProperties, "instanceName", "app");
         orderService = new OrderServiceImpl(
                 orderRepository,
                 productService,
@@ -82,7 +82,7 @@ class OrderServiceImplTest {
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CREATED);
         assertThat(order.getTotalAmount()).isEqualByComparingTo("198");
-        assertThat(order.getHandledBy()).isEqualTo("app1");
+        assertThat(order.getHandledBy()).isEqualTo("app");
 
         ArgumentCaptor<OrderCreatedEvent> eventCaptor = ArgumentCaptor.forClass(OrderCreatedEvent.class);
         verify(orderEventPublisher).publishOrderCreated(eventCaptor.capture());
@@ -101,7 +101,7 @@ class OrderServiceImplTest {
                 .totalAmount(BigDecimal.valueOf(198))
                 .orderStatus(OrderStatus.CREATED)
                 .statusReason("Order accepted")
-                .handledBy("app1")
+                .handledBy("app")
                 .build();
         Product product = Product.builder()
                 .id(20L)

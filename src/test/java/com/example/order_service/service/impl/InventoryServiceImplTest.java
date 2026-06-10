@@ -64,7 +64,7 @@ class InventoryServiceImplTest {
                 .thenReturn(Optional.of(Order.builder().id(1L).orderStatus(OrderStatus.CREATED).build()));
         when(productRepository.findByIdForUpdate(10L, RecordStatus.ACTIVE)).thenReturn(Optional.of(product));
 
-        InventoryResultEvent result = inventoryService.reserveInventory(event, "app1");
+        InventoryResultEvent result = inventoryService.reserveInventory(event, "app");
 
         assertThat(result.isReserved()).isTrue();
         assertThat(product.getStockQuantity()).isEqualTo(3);
@@ -86,14 +86,14 @@ class InventoryServiceImplTest {
                 .quantity(2)
                 .reserved(true)
                 .reason("Stock reserved")
-                .processedByInstance("app1")
+                .processedByInstance("app")
                 .build();
         when(inventoryReservationRepository.findByOrderId(1L)).thenReturn(Optional.of(reservation));
 
-        InventoryResultEvent result = inventoryService.reserveInventory(orderCreatedEvent(), "app2");
+        InventoryResultEvent result = inventoryService.reserveInventory(orderCreatedEvent(), "app");
 
         assertThat(result.isReserved()).isTrue();
-        assertThat(result.getProcessedByInstance()).isEqualTo("app1");
+        assertThat(result.getProcessedByInstance()).isEqualTo("app");
         verify(productRepository, never()).findByIdForUpdate(10L, RecordStatus.ACTIVE);
         verify(productRepository, never()).save(org.mockito.ArgumentMatchers.any());
     }
@@ -104,7 +104,7 @@ class InventoryServiceImplTest {
         when(orderRepository.findByIdAndStatusAndOrderStatus(1L, RecordStatus.ACTIVE, OrderStatus.CREATED))
                 .thenReturn(Optional.empty());
 
-        InventoryResultEvent result = inventoryService.reserveInventory(orderCreatedEvent(), "app1");
+        InventoryResultEvent result = inventoryService.reserveInventory(orderCreatedEvent(), "app");
 
         assertThat(result.isReserved()).isFalse();
         assertThat(result.getReason()).isEqualTo("Order is not available for inventory reservation");
@@ -119,7 +119,7 @@ class InventoryServiceImplTest {
                 .quantity(2)
                 .unitPrice(BigDecimal.valueOf(99))
                 .totalAmount(BigDecimal.valueOf(198))
-                .createdByInstance("app1")
+                .createdByInstance("app")
                 .build();
     }
 }

@@ -21,10 +21,10 @@ The service accepts orders, publishes an order-created Kafka event, reserves inv
 Client
   |
   v
-App (:8081)
+Spring Boot app in IntelliJ (:8081)
   |
   v
-MySQL
+Docker infra: MySQL, Kafka, Keycloak
   ^
   |
 Kafka topics:
@@ -102,18 +102,32 @@ On Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Start the full stack:
+Start the infrastructure services:
 
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
 Services:
 
-- API: `http://localhost:8081`
 - Kafka UI: `http://localhost:8080`
 - Keycloak Admin: `http://localhost:8090`
 - MySQL: `localhost:3306`
+
+Run the Spring Boot app from IntelliJ:
+
+```text
+com.example.order_service.OrderServiceApplication
+```
+
+The default local config expects:
+
+```text
+MySQL: jdbc:mysql://localhost:3306/orderdb
+Kafka: localhost:29092
+Keycloak issuer: http://localhost:8090/realms/order-service
+API: http://localhost:8081
+```
 
 Frontend dev origins allowed by default:
 
@@ -160,4 +174,4 @@ On Windows PowerShell:
 - Inventory reservation uses pessimistic locking to prevent concurrent stock overselling.
 - Kafka inventory processing is idempotent per order through the `inventory_reservations` table.
 - Flyway owns the schema and JPA runs with `ddl-auto=validate`.
-- Docker Compose starts one service instance directly on port `8081`.
+- Docker Compose starts only infrastructure services. Run the Spring Boot app from IntelliJ on port `8081`.
