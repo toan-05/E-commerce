@@ -26,9 +26,10 @@ public class GlobalExceptionHandler {
             BusinessException ex,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        HttpStatus status = businessStatus(ex.getErrorCode());
+        return ResponseEntity.status(status)
                 .body(errorResponse(
-                        HttpStatus.CONFLICT,
+                        status,
                         ex.getErrorCode(),
                         ex.getMessage(),
                         request.getRequestURI(),
@@ -132,5 +133,17 @@ public class GlobalExceptionHandler {
                 path,
                 details
         );
+    }
+
+    private HttpStatus businessStatus(ErrorCode errorCode) {
+        return switch (errorCode) {
+            case AUTH_INVALID_CREDENTIALS -> HttpStatus.UNAUTHORIZED;
+            case AUTH_EMAIL_ALREADY_EXISTS -> HttpStatus.CONFLICT;
+            case AUTH_USER_DISABLED -> HttpStatus.FORBIDDEN;
+            case RATE_LIMIT_EXCEEDED -> HttpStatus.TOO_MANY_REQUESTS;
+            case AUTH_DEFAULT_ROLE_NOT_FOUND, INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+            case VALIDATION_FAILED -> HttpStatus.BAD_REQUEST;
+            default -> HttpStatus.CONFLICT;
+        };
     }
 }

@@ -80,12 +80,10 @@ controller/
 service/
   AuthService.java
   UserAccountService.java
-  TokenService.java
 
 service/impl/
   AuthServiceImpl.java
   UserAccountServiceImpl.java
-  TokenServiceImpl.java
 
 entity/
   UserAccount.java
@@ -98,24 +96,21 @@ entity/enums/
 repository/
   UserAccountRepository.java
   RoleRepository.java
-  PermissionRepository.java
 
 config/
-  JwtConfig.java
-  PasswordConfig.java
-  RateLimitConfig.java
+  AppProperties.java
   SecurityConfig.java
 
 security/
   CurrentUser.java
   CurrentUserResolver.java
+  JwtTokenProvider.java
   JwtAuthenticationFilter.java
   JwtAuthenticationEntryPoint.java
   JwtAccessDeniedHandler.java
   ClientIpResolver.java
   RateLimitFilter.java
   RateLimitPolicy.java
-  RateLimitRule.java
 
 dto/request/auth/
   RegisterRequest.java
@@ -130,13 +125,10 @@ dto/response/auth/
 Do not add:
 
 ```text
-RefreshToken.java
-RefreshTokenRepository.java
-RefreshTokenService.java
-RefreshTokenRequest.java
-LogoutRequest.java
-UserRole.java
-PermissionCode.java
+token persistence entity/repository/service/dto
+server-side logout dto/controller flow
+role enum catalog
+permission enum catalog
 ```
 
 ## Data Model
@@ -246,10 +238,10 @@ This is many-to-many so one role can have many permissions and one permission ca
 
 Use Spring Security `PasswordEncoder`.
 
-Preferred bean:
+Password encoder bean:
 
 ```java
-PasswordEncoderFactories.createDelegatingPasswordEncoder()
+new BCryptPasswordEncoder()
 ```
 
 Rules:
@@ -293,7 +285,7 @@ Suggested lifetime:
 access token: 15 minutes
 ```
 
-Use an HMAC secret from configuration for local phase 1.5. Do not commit production secrets.
+Use HS512 with an HMAC secret from configuration for local phase 1.5. Do not commit production secrets.
 
 Important tradeoff:
 
@@ -571,7 +563,8 @@ app:
 - Add `Role` and `Permission`.
 - Add `UserStatus`.
 - Add Flyway migration for `user_accounts`, `roles`, `permissions`, `role_permissions`, and `user_roles`.
-- Add `UserAccountRepository`, `RoleRepository`, and `PermissionRepository`.
+- Add `UserAccountRepository` and `RoleRepository`.
+- Add `PermissionRepository` later with admin permission-management APIs.
 - Seed default roles and permissions.
 - Do not add role/permission enum catalogs.
 - Do not add token persistence.
@@ -579,8 +572,8 @@ app:
 ### Phase 1.5B: Register/Login
 
 - Add auth DTOs.
-- Add `PasswordEncoder`.
-- Add `TokenService`.
+- Add `BCryptPasswordEncoder` in `SecurityConfig`.
+- Add `JwtTokenProvider` under `security`.
 - Add `AuthService`.
 - Add `AuthController`.
 - Assign the default `USER` role during registration by role code lookup.

@@ -58,3 +58,12 @@ app:
   kafka:
     order-created-topic: ${ORDER_CREATED_TOPIC:order-created}
     inventory-result-topic: ${INVENTORY_RESULT_TOPIC:inventory-result}
+  auth:
+    issuer: ${APP_AUTH_ISSUER:order-service}
+    access-token-ttl-seconds: ${APP_AUTH_ACCESS_TOKEN_TTL_SECONDS:900}
+    jwt-secret: ${APP_AUTH_JWT_SECRET:dev-secret-change-me}
+  rate-limit:
+    enabled: ${APP_RATE_LIMIT_ENABLED:true}
+    trusted-proxy-enabled: ${APP_TRUSTED_PROXY_ENABLED:false}
+    login-limit-per-minute: ${APP_RATE_LIMIT_LOGIN_PER_MINUTE:5}
+    register-limit-per-minute: ${APP_RATE_LIMIT_REGISTER_PER_MINUTE:3}
