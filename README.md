@@ -1,6 +1,6 @@
 # Order Service
 
-Event-driven order processing service built with Spring Boot, MySQL, Flyway, Kafka, Docker Compose, and Keycloak.
+Event-driven order processing service built with Spring Boot, MySQL, Flyway, Kafka, Docker Compose, and manual-auth-ready Spring Security.
 
 The service accepts orders, publishes an order-created Kafka event, reserves inventory asynchronously, publishes the inventory result, and updates the order status from that result.
 
@@ -24,7 +24,7 @@ Client
 Spring Boot app in IntelliJ (:8081)
   |
   v
-Docker infra: MySQL, Kafka, Keycloak
+Docker infra: MySQL, Kafka
   ^
   |
 Kafka topics:
@@ -83,7 +83,7 @@ Successful API responses use a consistent wrapper:
 
 List endpoints return paging metadata inside `data`.
 
-Most `/api/v1/**` endpoints require a Keycloak access token after OAuth2 Resource Server is enabled. Use `/api/v1/me` to inspect the authenticated user and mapped roles.
+Manual authentication is being introduced in phase 1.5. Until the JWT filter is wired, existing product/order APIs remain open for local development.
 
 Create order example:
 
@@ -124,7 +124,6 @@ docker compose up -d
 Services:
 
 - Kafka UI: `http://localhost:8080`
-- Keycloak Admin: `http://localhost:8090`
 - MySQL: `localhost:3306`
 
 Run the Spring Boot app from IntelliJ:
@@ -138,7 +137,6 @@ The default local config expects:
 ```text
 MySQL: jdbc:mysql://localhost:3306/orderdb
 Kafka: localhost:29092
-Keycloak issuer: http://localhost:8090/realms/order-service
 API: http://localhost:8081
 ```
 

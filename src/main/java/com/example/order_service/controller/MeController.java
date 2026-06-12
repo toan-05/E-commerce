@@ -1,8 +1,8 @@
 package com.example.order_service.controller;
 
+import com.example.order_service.dto.response.common.ApiResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,18 +15,17 @@ import java.util.Map;
 public class MeController {
 
     @GetMapping
-    public Map<String, Object> getCurrentUser(JwtAuthenticationToken authentication) {
-        Jwt jwt = authentication.getToken();
+    public ApiResponse<Map<String, Object>> getCurrentUser(Authentication authentication) {
         List<String> authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return Map.of(
-                "subject", jwt.getSubject(),
+        Map<String, Object> currentUser = Map.of(
                 "username", authentication.getName(),
-                "authorities", authorities,
-                "claims", jwt.getClaims()
+                "authorities", authorities
         );
+
+        return ApiResponse.success("Current user fetched", currentUser);
     }
 }
 
