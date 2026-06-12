@@ -1,6 +1,6 @@
 package com.example.order_service.exception;
 
-import com.example.order_service.dto.response.ApiErrorResponse;
+import com.example.order_service.dto.response.common.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,7 +31,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.CONFLICT,
                         ex.getErrorCode(),
                         ex.getMessage(),
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of()
                 ));
     }
 
@@ -45,7 +46,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.NOT_FOUND,
                         ex.getErrorCode(),
                         ex.getMessage(),
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of()
                 ));
     }
 
@@ -54,15 +56,16 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining("; "));
+        List<ApiErrorResponse.FieldErrorResponse> details = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> new ApiErrorResponse.FieldErrorResponse(error.getField(), error.getDefaultMessage()))
+                .toList();
         return ResponseEntity.badRequest()
                 .body(errorResponse(
                         HttpStatus.BAD_REQUEST,
                         ErrorCode.VALIDATION_FAILED,
-                        message,
-                        request.getRequestURI()
+                        "Validation failed",
+                        request.getRequestURI(),
+                        details
                 ));
     }
 
@@ -76,7 +79,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.BAD_REQUEST,
                         ErrorCode.MALFORMED_REQUEST,
                         "Request body is missing or malformed",
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of()
                 ));
     }
 
@@ -90,7 +94,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.NOT_FOUND,
                         ErrorCode.ENDPOINT_NOT_FOUND,
                         "Endpoint not found",
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of()
                 ));
     }
 
@@ -105,7 +110,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         ErrorCode.INTERNAL_SERVER_ERROR,
                         "Unexpected server error",
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        List.of()
                 ));
     }
 
@@ -113,15 +119,18 @@ public class GlobalExceptionHandler {
             HttpStatus status,
             ErrorCode errorCode,
             String message,
-            String path
+            String path,
+            List<ApiErrorResponse.FieldErrorResponse> details
     ) {
         return new ApiErrorResponse(
+                false,
                 Instant.now(),
                 status.value(),
                 errorCode.name(),
                 status.getReasonPhrase(),
                 message,
-                path
+                path,
+                details
         );
     }
 }

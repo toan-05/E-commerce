@@ -1,11 +1,16 @@
 package com.example.order_service.controller;
 
-import com.example.order_service.dto.request.CreateProductRequest;
-import com.example.order_service.dto.request.UpdateProductRequest;
-import com.example.order_service.dto.response.ProductResponse;
+import com.example.order_service.dto.request.product.CreateProductRequest;
+import com.example.order_service.dto.request.product.UpdateProductRequest;
+import com.example.order_service.dto.response.common.ApiResponse;
+import com.example.order_service.dto.response.common.PageResponse;
+import com.example.order_service.dto.response.product.ProductResponse;
 import com.example.order_service.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * REST API for product catalog operations.
@@ -34,45 +37,48 @@ public class ProductController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResponse createProduct(@Valid @RequestBody CreateProductRequest request) {
-        return ProductResponse.from(productService.createProduct(request));
+    public ApiResponse<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest request) {
+        return ApiResponse.success("Product created", ProductResponse.from(productService.createProduct(request)));
     }
 
     /**
      * Returns one product by id.
      */
     @GetMapping("/{id}")
-    public ProductResponse getProduct(@PathVariable Long id) {
-        return ProductResponse.from(productService.getProduct(id));
+    public ApiResponse<ProductResponse> getProduct(@PathVariable Long id) {
+        return ApiResponse.success("Product fetched", ProductResponse.from(productService.getProduct(id)));
     }
 
     /**
      * Returns all products.
      */
     @GetMapping
-    public List<ProductResponse> getProducts() {
-        return productService.getProducts().stream()
-                .map(ProductResponse::from)
-                .toList();
+    public ApiResponse<PageResponse<ProductResponse>> getProducts(
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ApiResponse.success(
+                "Products fetched",
+                PageResponse.from(productService.getProducts(pageable), ProductResponse::from)
+        );
     }
 
     /**
      * Replaces product details.
      */
     @PutMapping("/{id}")
-    public ProductResponse updateProduct(
+    public ApiResponse<ProductResponse> updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody UpdateProductRequest request
     ) {
-        return ProductResponse.from(productService.updateProduct(id, request));
+        return ApiResponse.success("Product updated", ProductResponse.from(productService.updateProduct(id, request)));
     }
 
     /**
      * Deletes one product by id.
      */
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable Long id) {
+    public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+        return ApiResponse.success("Product deleted");
     }
 }

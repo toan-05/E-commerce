@@ -2,7 +2,7 @@ package com.example.order_service.mapper;
 
 import com.example.order_service.entity.Order;
 import com.example.order_service.entity.Product;
-import com.example.order_service.dto.request.CreateOrderRequest;
+import com.example.order_service.dto.request.order.CreateOrderRequest;
 import com.example.order_service.entity.enums.OrderStatus;
 import org.springframework.stereotype.Component;
 

@@ -51,24 +51,37 @@ Swagger UI is available after startup:
 Useful endpoints:
 
 ```http
-GET /api/v1/products
+GET /api/v1/products?page=0&size=20&sort=id,desc
 POST /api/v1/products
 GET /api/v1/products/{id}
 PUT /api/v1/products/{id}
 DELETE /api/v1/products/{id}
 
-GET /api/v1/orders
+GET /api/v1/orders?page=0&size=20&sort=id,desc
 POST /api/v1/orders
 GET /api/v1/orders/{id}
 PUT /api/v1/orders/{id}
 DELETE /api/v1/orders/{id}
 
-GET /api/v1/inventory-reservations
+GET /api/v1/inventory-reservations?page=0&size=20&sort=id,desc
 GET /api/v1/inventory-reservations/{orderId}
 DELETE /api/v1/inventory-reservations/{orderId}
 
 GET /actuator/health
 ```
+
+Successful API responses use a consistent wrapper:
+
+```json
+{
+  "success": true,
+  "message": "Products fetched",
+  "data": {},
+  "timestamp": "2026-06-12T00:00:00Z"
+}
+```
+
+List endpoints return paging metadata inside `data`.
 
 Most `/api/v1/**` endpoints require a Keycloak access token after OAuth2 Resource Server is enabled. Use `/api/v1/me` to inspect the authenticated user and mapped roles.
 

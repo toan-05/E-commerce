@@ -1,10 +1,10 @@
 package com.example.order_service.service;
 
-import com.example.order_service.dto.request.CreateProductRequest;
-import com.example.order_service.dto.request.UpdateProductRequest;
+import com.example.order_service.dto.request.product.CreateProductRequest;
+import com.example.order_service.dto.request.product.UpdateProductRequest;
 import com.example.order_service.entity.Product;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Handles product catalog operations.
@@ -22,9 +22,9 @@ public interface ProductService {
     Product getProduct(Long id);
 
     /**
-     * Returns all products.
+     * Returns products by page.
      */
-    List<Product> getProducts();
+    Page<Product> getProducts(Pageable pageable);
 
     /**
      * Replaces product details.

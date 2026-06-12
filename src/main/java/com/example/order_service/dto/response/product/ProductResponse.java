@@ -1,4 +1,4 @@
-package com.example.order_service.dto.response;
+package com.example.order_service.dto.response.product;
 
 import com.example.order_service.entity.Product;
 import com.example.order_service.entity.enums.RecordStatus;

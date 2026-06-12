@@ -1,8 +1,8 @@
 package com.example.order_service.service;
 
 import com.example.order_service.entity.InventoryReservation;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Handles read and cleanup operations for inventory reservations.
@@ -15,9 +15,9 @@ public interface InventoryReservationService {
     InventoryReservation getReservation(Long orderId);
 
     /**
-     * Returns all inventory reservations.
+     * Returns inventory reservations by page.
      */
-    List<InventoryReservation> getReservations();
+    Page<InventoryReservation> getReservations(Pageable pageable);
 
     /**
      * Deletes one inventory reservation by order id.

@@ -1,10 +1,10 @@
 package com.example.order_service.service;
 
-import com.example.order_service.dto.request.CreateOrderRequest;
-import com.example.order_service.dto.request.UpdateOrderRequest;
+import com.example.order_service.dto.request.order.CreateOrderRequest;
+import com.example.order_service.dto.request.order.UpdateOrderRequest;
 import com.example.order_service.entity.Order;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Handles order lifecycle operations.
@@ -22,9 +22,9 @@ public interface OrderService {
     Order getOrder(Long id);
 
     /**
-     * Returns all orders.
+     * Returns orders by page.
      */
-    List<Order> getOrders();
+    Page<Order> getOrders(Pageable pageable);
 
     /**
      * Replaces an order while it is still editable.

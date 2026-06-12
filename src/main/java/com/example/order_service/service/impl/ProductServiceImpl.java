@@ -2,16 +2,16 @@ package com.example.order_service.service.impl;
 
 import com.example.order_service.entity.Product;
 import com.example.order_service.entity.enums.RecordStatus;
-import com.example.order_service.dto.request.CreateProductRequest;
-import com.example.order_service.dto.request.UpdateProductRequest;
+import com.example.order_service.dto.request.product.CreateProductRequest;
+import com.example.order_service.dto.request.product.UpdateProductRequest;
 import com.example.order_service.exception.ErrorCode;
 import com.example.order_service.exception.ResourceNotFoundException;
 import com.example.order_service.repository.ProductRepository;
 import com.example.order_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +37,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productRepository.findAllByStatus(RecordStatus.ACTIVE);
+    public Page<Product> getProducts(Pageable pageable) {
+        return productRepository.findAllByStatus(RecordStatus.ACTIVE, pageable);
     }
 
     @Override

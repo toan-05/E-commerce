@@ -1,10 +1,10 @@
 package com.example.order_service.service.impl;
 
 import com.example.order_service.config.AppProperties;
-import com.example.order_service.dto.request.UpdateOrderRequest;
+import com.example.order_service.dto.request.order.UpdateOrderRequest;
 import com.example.order_service.entity.Order;
 import com.example.order_service.entity.Product;
-import com.example.order_service.dto.request.CreateOrderRequest;
+import com.example.order_service.dto.request.order.CreateOrderRequest;
 import com.example.order_service.entity.enums.OrderStatus;
 import com.example.order_service.entity.enums.RecordStatus;
 import com.example.order_service.event.OrderCreatedEvent;
@@ -18,10 +18,11 @@ import com.example.order_service.repository.OrderRepository;
 import com.example.order_service.service.OrderService;
 import com.example.order_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrders() {
-        return orderRepository.findAllByStatus(RecordStatus.ACTIVE);
+    public Page<Order> getOrders(Pageable pageable) {
+        return orderRepository.findAllByStatus(RecordStatus.ACTIVE, pageable);
     }
 
     @Override

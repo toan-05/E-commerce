@@ -1,6 +1,6 @@
 package com.example.order_service.service.impl;
 
-import com.example.order_service.dto.request.UpdateProductRequest;
+import com.example.order_service.dto.request.product.UpdateProductRequest;
 import com.example.order_service.entity.Product;
 import com.example.order_service.entity.enums.RecordStatus;
 import com.example.order_service.repository.ProductRepository;

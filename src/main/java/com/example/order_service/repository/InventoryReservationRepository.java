@@ -2,9 +2,10 @@ package com.example.order_service.repository;
 
 import com.example.order_service.entity.InventoryReservation;
 import com.example.order_service.entity.enums.RecordStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface InventoryReservationRepository extends JpaRepository<InventoryReservation, Long> {
@@ -13,7 +14,7 @@ public interface InventoryReservationRepository extends JpaRepository<InventoryR
 
     Optional<InventoryReservation> findByOrderIdAndStatus(Long orderId, RecordStatus status);
 
-    List<InventoryReservation> findAllByStatus(RecordStatus status);
+    Page<InventoryReservation> findAllByStatus(RecordStatus status, Pageable pageable);
 
     boolean existsByOrderId(Long orderId);
 

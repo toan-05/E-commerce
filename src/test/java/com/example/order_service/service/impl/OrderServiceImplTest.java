@@ -1,10 +1,10 @@
 package com.example.order_service.service.impl;
 
 import com.example.order_service.config.AppProperties;
-import com.example.order_service.dto.request.UpdateOrderRequest;
+import com.example.order_service.dto.request.order.UpdateOrderRequest;
 import com.example.order_service.entity.Order;
 import com.example.order_service.entity.Product;
-import com.example.order_service.dto.request.CreateOrderRequest;
+import com.example.order_service.dto.request.order.CreateOrderRequest;
 import com.example.order_service.entity.enums.OrderStatus;
 import com.example.order_service.entity.enums.RecordStatus;
 import com.example.order_service.event.OrderCreatedEvent;

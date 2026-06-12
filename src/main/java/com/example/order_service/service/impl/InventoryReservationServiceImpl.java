@@ -7,9 +7,9 @@ import com.example.order_service.exception.ResourceNotFoundException;
 import com.example.order_service.repository.InventoryReservationRepository;
 import com.example.order_service.service.InventoryReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +28,8 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
     }
 
     @Override
-    public List<InventoryReservation> getReservations() {
-        return inventoryReservationRepository.findAllByStatus(RecordStatus.ACTIVE);
+    public Page<InventoryReservation> getReservations(Pageable pageable) {
+        return inventoryReservationRepository.findAllByStatus(RecordStatus.ACTIVE, pageable);
     }
 
     @Override
