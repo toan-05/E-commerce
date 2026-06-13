@@ -75,7 +75,6 @@ Continue using the current layer-based structure. DTOs stay module-grouped.
 ```text
 controller/
   AuthController.java
-  MeController.java
 
 service/
   AuthService.java
@@ -103,11 +102,8 @@ config/
 
 security/
   CurrentUser.java
-  CurrentUserResolver.java
   JwtTokenProvider.java
   JwtAuthenticationFilter.java
-  JwtAuthenticationEntryPoint.java
-  JwtAccessDeniedHandler.java
   ClientIpResolver.java
   RateLimitFilter.java
   RateLimitPolicy.java
@@ -119,7 +115,6 @@ dto/request/auth/
 dto/response/auth/
   AuthTokenResponse.java
   AuthUserResponse.java
-  MeResponse.java
 ```
 
 Do not add:
@@ -434,7 +429,7 @@ GET /v3/api-docs/**
 ```http
 POST /api/v1/auth/register
 POST /api/v1/auth/login
-GET  /api/v1/me
+GET  /api/v1/auth/me
 ```
 
 ### Register
@@ -489,7 +484,7 @@ Public:
   GET  /swagger-ui.html, /swagger-ui/**, /v3/api-docs/**
 
 Authenticated:
-  GET /api/v1/me
+  GET /api/v1/auth/me
   GET /api/v1/orders/**
   POST /api/v1/orders
 
@@ -592,7 +587,7 @@ app:
 
 - Add `JwtAuthenticationFilter`.
 - Map role codes and permission codes to Spring authorities.
-- Update `MeController`.
+- Add `GET /api/v1/auth/me` to `AuthController`.
 - Return user id, email, roles, and permissions from the authenticated token.
 - Keep response wrapped by `ApiResponse`.
 
@@ -612,7 +607,7 @@ app:
 - Role codes and permission codes are available for RBAC enforcement.
 - Auth endpoints are rate limited by IP.
 - Exceeding rate limit returns HTTP `429` and `RATE_LIMIT_EXCEEDED`.
-- `/api/v1/me` returns the current user.
+- `/api/v1/auth/me` returns the current user.
 - Passwords are stored only as hashes.
 - Backend tests pass.
 

@@ -129,7 +129,7 @@ Services:
 Run the Spring Boot app from IntelliJ:
 
 ```text
-com.example.order_service.OrderServiceApplication
+com.example.ecommerce.OrderServiceApplication
 ```
 
 The default local config expects:
