@@ -64,19 +64,5 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-  # OAuth2 / OpenID Connect identity provider
-  keycloak:
-    image: quay.io/keycloak/keycloak:25.0.6
-    container_name: keycloak
-    command: start-dev
-    environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-    ports:
-      - "${KEYCLOAK_PORT}:8080"
-    volumes:
-      - keycloak_data:/opt/keycloak/data
-
 volumes:
   mysql_data:
-  keycloak_data:
