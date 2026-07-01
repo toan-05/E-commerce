@@ -40,6 +40,10 @@ class RateLimitFilterTest {
         assertThat(firstResponse.getStatus()).isEqualTo(200);
         assertThat(secondResponse.getStatus()).isEqualTo(200);
         assertThat(thirdResponse.getStatus()).isEqualTo(429);
+        assertThat(thirdResponse.getHeader("Retry-After")).isNotBlank();
+        assertThat(thirdResponse.getHeader("X-RateLimit-Limit")).isEqualTo("2");
+        assertThat(thirdResponse.getHeader("X-RateLimit-Remaining")).isEqualTo("0");
+        assertThat(thirdResponse.getHeader("X-RateLimit-Reset")).isNotBlank();
         assertThat(thirdResponse.getContentAsString()).contains("RATE_LIMIT_EXCEEDED");
     }
 

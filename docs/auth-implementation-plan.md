@@ -591,10 +591,20 @@ app:
 - Return user id, email, roles, and permissions from the authenticated token.
 - Keep response wrapped by `ApiResponse`.
 
-### Phase 1.5E: Security Rules And Tests
+### Phase 1.5E: Protected API Security Rules
 
 - Update `SecurityConfig`.
-- Add tests for register, login, `/me`, permission checks, disabled users, invalid tokens, expired tokens, and rate limit exceeded.
+- Apply permission rules to product, order, inventory, and user/admin endpoints.
+- Return `AUTH_FORBIDDEN` with HTTP `403` when an authenticated user does not have the required permission.
+- Change default API fallback from `permitAll` to `authenticated` after endpoint rules are complete.
+
+### Phase 1.5F: Security Tests And Hardening
+
+- Add controller tests for register, login, validation, duplicate email, invalid credentials, and `/api/v1/auth/me`.
+- Add JWT hardening tests for tampered signature, expired token, invalid issuer, invalid algorithm, missing required claims, and invalid role/permission claim types.
+- Add JWT authentication filter tests for `SecurityContext` and authority mapping.
+- Add rate-limit tests for exceeded quota and rate-limit headers.
+- Keep auth/security tests independent from MySQL by using unit and standalone MockMvc tests.
 
 ## Acceptance Criteria
 
